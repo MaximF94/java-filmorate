@@ -16,8 +16,8 @@ public class FilmController {
 
     private static final Logger logger = LoggerFactory.getLogger(FilmController.class);
 
-    private final int MAX_LENGTH_DESCRIPTION = 200;
-    private final LocalDate MIN_RELEASE_DATE = LocalDate.of(1895, 12, 28);
+    private final int maxLengthDescription = 200;
+    private final LocalDate minReleaseDate = LocalDate.of(1895, 12, 28);
 
     private final Map<Long, Film> films = new HashMap<>();
     Set<String> errors = new HashSet<>();
@@ -76,11 +76,11 @@ public class FilmController {
             errors.add("Название не может быть пустым");
         }
 
-        if (film.getDescription().length() > MAX_LENGTH_DESCRIPTION) {
+        if (film.getDescription().length() > maxLengthDescription) {
             errors.add("Описание не должно превышать 200 символов");
         }
 
-        if (film.getReleaseDate().isBefore(MIN_RELEASE_DATE)) {
+        if (film.getReleaseDate().isBefore(minReleaseDate)) {
             errors.add("Дата релиза не должна быть раньше, чем 28.12.1895");
         }
 
