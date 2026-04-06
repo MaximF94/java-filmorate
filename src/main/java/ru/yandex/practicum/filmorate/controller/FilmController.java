@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
@@ -10,17 +11,17 @@ import ru.yandex.practicum.filmorate.model.Film;
 import java.time.LocalDate;
 import java.util.*;
 
+@Slf4j
 @RestController
 @RequestMapping("/films")
 public class FilmController {
 
-    private static final Logger logger = LoggerFactory.getLogger(FilmController.class);
 
-    private final int maxLengthDescription = 200;
-    private final LocalDate minReleaseDate = LocalDate.of(1895, 12, 28);
+    private static final int MAX_LENGTH_DESCRIPTION = 200;
+    private static final LocalDate MIN_RELEASE_DATE = LocalDate.of(1895, 12, 28);
 
     private final Map<Long, Film> films = new HashMap<>();
-    Set<String> errors = new HashSet<>();
+
 
     @GetMapping
     public Collection<Film> findAll() {
@@ -30,14 +31,16 @@ public class FilmController {
     @PostMapping
     public Film create(@RequestBody Film film) {
 
-        if (!validate(film).isEmpty()) {
-            logger.error("Валидация фильма не пройдена: {}", film);
-            throw new ValidationException(String.join(", ", validate(film)));
+        Set<String> errors = validate(film);
+
+        if (!errors.isEmpty()) {
+            log.error("Валидация фильма не пройдена: {}", film);
+            throw new ValidationException(String.join(", ", errors));
         }
 
         film.setId(getNextId());
         films.put(film.getId(), film);
-        logger.info("Фильм успешно добавлен: {}", film.getId());
+        log.info("Фильм успешно добавлен: {}", film.getId());
         return film;
 
     }
@@ -46,41 +49,41 @@ public class FilmController {
     public Film update(@RequestBody Film newFilm) {
 
         if (newFilm.getId() == null) {
-            logger.error("ID не указан: {}", newFilm);
+            log.error("ID не указан: {}", newFilm);
             throw new ValidationException("Id должен быть указан");
         }
 
         if (films.containsKey(newFilm.getId())) {
             if (!validate(newFilm).isEmpty()) {
-                logger.error("Валидация фильма не пройдена: {}", newFilm);
+                log.error("Валидация фильма не пройдена: {}", newFilm);
                 throw new ValidationException(String.join(", ", validate(newFilm)));
             }
             Film oldFilm = films.get(newFilm.getId());
 
             updateFilmFields(oldFilm, newFilm);
-            logger.info("Фильм успешно обновлен: {}", newFilm.getId());
+            log.info("Фильм успешно обновлен: {}", newFilm.getId());
 
             return oldFilm;
         }
 
-        logger.error("ID не найден: {}", newFilm);
+        log.error("ID не найден: {}", newFilm);
         throw new NotFoundException("Фильм с id = " + newFilm.getId() + " не найден");
 
     }
 
     Set<String> validate(Film film) {
 
-        errors.clear();
+        Set<String> errors = new HashSet<>();
 
         if (film.getName().isBlank()) {
             errors.add("Название не может быть пустым");
         }
 
-        if (film.getDescription().length() > maxLengthDescription) {
+        if (film.getDescription().length() > MAX_LENGTH_DESCRIPTION) {
             errors.add("Описание не должно превышать 200 символов");
         }
 
-        if (film.getReleaseDate().isBefore(minReleaseDate)) {
+        if (film.getReleaseDate().isBefore(MIN_RELEASE_DATE)) {
             errors.add("Дата релиза не должна быть раньше, чем 28.12.1895");
         }
 
@@ -109,6 +112,9 @@ public class FilmController {
         }
     }
 
+    //Ранее, ты оставил комментарий "чтобы не вычислять id каждый раз, можно сохранить его в поле класса
+    // и инкрементировать при каждом добавлении"
+    // Вопрос: Про какой класс имелось ввиду, в котором нужно сохранить его? В pojo классах, вроде как, логику лучше не хранить. Только геттеры, сеттеры, конструктор equals и hashcode
     private long getNextId() {
         long currentMaxId = films.keySet()
                 .stream()
