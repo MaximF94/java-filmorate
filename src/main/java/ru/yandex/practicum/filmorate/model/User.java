@@ -1,23 +1,21 @@
 package ru.yandex.practicum.filmorate.model;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 
 import java.time.LocalDate;
 
-/**
- * Film.
- */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Film {
+public class User {
     private Long id;
+    private String email;
+    @NonNull
+    private String login;
     private String name;
-    private String description;
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    private LocalDate releaseDate;
-    private Long duration;
+    @NonNull
+    private LocalDate birthday;
 }
