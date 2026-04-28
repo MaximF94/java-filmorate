@@ -12,7 +12,6 @@ import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.time.LocalDate;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -41,13 +40,6 @@ public class FilmService {
         });
     }
 
-    private User findUser(Long id) {
-        return userStorage.findById(id).orElseThrow(() -> {
-            log.error("ID пользователя не найден: {}", id);
-            return new NotFoundException("Пользователь не найден");
-        });
-    }
-
     public Film create(Film film) {
 
         Set<String> errors = validate(film);
@@ -70,12 +62,18 @@ public class FilmService {
             throw new ValidationException("Id должен быть указан");
         }
 
+        Set<String> errors = validate(newFilm);
+
+        if (!errors.isEmpty()) {
+            log.error("Валидация фильма не пройдена: {}", newFilm);
+            throw new ValidationException(String.join(", ", errors));
+        }
+
         Film oldFilm = filmStorage.findById(newFilm.getId())
                 .orElseThrow(() -> {
                     log.error("ID не найден: {}", newFilm.getId());
                     return new NotFoundException("Фильм не найден");
                 });
-
 
         updateFilmFields(oldFilm, newFilm);
         log.info("Фильм успешно обновлен: {}", newFilm.getId());
@@ -85,24 +83,6 @@ public class FilmService {
     public boolean delete(Long id) {
         log.info("Фильм успешно удален: {}", id);
         return filmStorage.delete(id);
-    }
-
-    private void updateFilmFields(Film oldFilm, Film newFilm) {
-        if (!newFilm.getName().isBlank()) {
-            oldFilm.setName(newFilm.getName());
-        }
-
-        if (newFilm.getReleaseDate() != null) {
-            oldFilm.setReleaseDate(newFilm.getReleaseDate());
-        }
-
-        if (!newFilm.getDescription().isBlank()) {
-            oldFilm.setDescription(newFilm.getDescription());
-        }
-
-        if (newFilm.getDuration() != null) {
-            oldFilm.setDuration(newFilm.getDuration());
-        }
     }
 
     public void addLike(Long filmId, Long userId) {
@@ -132,16 +112,37 @@ public class FilmService {
 
     public Collection<Film> getTopFilmsByLikes(Integer count) {
 
-        Collection<Film> allFilms = filmStorage.findAll();
-
-        Collection<Film> sortedFilms = allFilms.stream()
-                .sorted(Comparator.comparingInt(this::getLikesCount).reversed())
-                .toList();
+        Collection<Film> sortedFilms = filmStorage.getTopFilmsByLikes(count);
 
         log.info("Фильмы выведены по запросу {}", count);
 
-        return sortedFilms.stream().limit(count).collect(Collectors.toList());
+        return sortedFilms;
 
+    }
+
+    private User findUser(Long id) {
+        return userStorage.findById(id).orElseThrow(() -> {
+            log.error("ID пользователя не найден: {}", id);
+            return new NotFoundException("Пользователь не найден");
+        });
+    }
+
+    private void updateFilmFields(Film oldFilm, Film newFilm) {
+        if (!newFilm.getName().isBlank()) {
+            oldFilm.setName(newFilm.getName());
+        }
+
+        if (newFilm.getReleaseDate() != null) {
+            oldFilm.setReleaseDate(newFilm.getReleaseDate());
+        }
+
+        if (!newFilm.getDescription().isBlank()) {
+            oldFilm.setDescription(newFilm.getDescription());
+        }
+
+        if (newFilm.getDuration() != null) {
+            oldFilm.setDuration(newFilm.getDuration());
+        }
     }
 
     private Integer getLikesCount(Film film) {

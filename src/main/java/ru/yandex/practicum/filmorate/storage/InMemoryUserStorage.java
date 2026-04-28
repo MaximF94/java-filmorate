@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 public class InMemoryUserStorage implements UserStorage {
 
     private final Map<Long, User> users = new HashMap<>();
+    private long nextId = 1;
 
     @Override
     public User save(User user) {
@@ -18,7 +19,7 @@ public class InMemoryUserStorage implements UserStorage {
             user.setFriends(new HashSet<>());
         }
 
-        users.put(user.getId(),user);
+        users.put(user.getId(), user);
         return user;
     }
 
@@ -95,11 +96,6 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     private long getNextId() {
-        long currentMaxId = users.keySet()
-                .stream()
-                .mapToLong(id -> id)
-                .max()
-                .orElse(0);
-        return ++currentMaxId;
+        return nextId++;
     }
 }

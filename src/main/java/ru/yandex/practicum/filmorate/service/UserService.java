@@ -48,6 +48,13 @@ public class UserService {
             throw new ValidationException("Id должен быть указан");
         }
 
+        Set<String> errors = validate(newUser);
+
+        if (!errors.isEmpty()) {
+            log.error("Валидация пользователя не пройдена: {}", newUser);
+            throw new ValidationException(String.join(", ", errors));
+        }
+
         User oldUser = findUser(newUser.getId());
 
 
@@ -106,6 +113,13 @@ public class UserService {
         return userStorage.getCommonFriends(user, otherUser);
     }
 
+    public User findUser(Long id) {
+        return userStorage.findById(id).orElseThrow(() -> {
+            log.error("ID пользователя не найден: {}", id);
+            return new NotFoundException("Пользователь не найден");
+        });
+    }
+
     private void updateUserFields(User oldUser, User newUser) {
 
         if (!newUser.getEmail().isBlank()) {
@@ -146,13 +160,6 @@ public class UserService {
         }
 
         return errors;
-    }
-
-    public User findUser(Long id) {
-        return userStorage.findById(id).orElseThrow(() -> {
-            log.error("ID пользователя не найден: {}", id);
-            return new NotFoundException("Пользователь не найден");
-        });
     }
 
     private boolean isValidEmail(String email) {

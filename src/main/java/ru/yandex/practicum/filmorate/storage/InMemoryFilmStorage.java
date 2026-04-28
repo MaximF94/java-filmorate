@@ -10,6 +10,7 @@ import java.util.*;
 public class InMemoryFilmStorage implements FilmStorage {
 
     private final Map<Long, Film> films = new HashMap<>();
+    private long nextId = 1;
 
     @Override
     public Film save(Film film) {
@@ -62,12 +63,19 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     }
 
+    @Override
+    public Collection<Film> getTopFilmsByLikes(Integer count) {
+        return films.values().stream()
+                .sorted(Comparator.comparingInt(this::getLikesCount).reversed())
+                .limit(count)
+                .toList();
+    }
+
+    private Integer getLikesCount(Film film) {
+        return film.getLikes() != null ? film.getLikes().size() : 0;
+    }
+
     private long getNextId() {
-        long currentMaxId = films.keySet()
-                .stream()
-                .mapToLong(id -> id)
-                .max()
-                .orElse(0);
-        return ++currentMaxId;
+        return nextId++;
     }
 }

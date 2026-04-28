@@ -19,4 +19,6 @@ public interface FilmStorage {
     public void addLike(Film film, User user);
 
     public void deleteLike(Film film, User user);
+
+    public Collection<Film> getTopFilmsByLikes(Integer count);
 }
