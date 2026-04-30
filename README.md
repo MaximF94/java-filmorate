@@ -2,6 +2,7 @@
 Template repository for Filmorate project.
 ![Схема БД](./images/shema-filmorate.png)
 
+```sql
 Table users {
   user_id integer [primary key]
   email varchar
@@ -59,3 +60,4 @@ Ref genre_films: films.film_id < films_genres.film_id
 Ref genre_films: genres.genre_id < films_genres.genre_id
 
 Ref rating_films: mpa_ratings.mpa_rating_id < films.mpa_rating_id
+```
