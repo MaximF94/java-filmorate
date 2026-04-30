@@ -69,11 +69,30 @@ INSERT INTO films (name,description,release_date,duration,mpa_rating_id)
 VALUES ('Назад в будущее','Фильм про путешествия во времени','1985-07-03',116,3);
 ```
 #### 2. Выбрать все фильмы с рейтингом PG-13
-
 ```sql
 SELECT f*, mpa.name
 FROM films AS f
 INNER JOIN mpa_ratings AS mpa ON f.film_id = mpa.film_id
 WHERE mpa.name = 'PG-13';
+```
+
+#### 3. Просмотр друзей пользователя
+```sql
+SELECT u*
+FROM users AS u
+INNER JOIN users_friends AS uf ON u.user_id = uf.friend_id
+WHERE uf.user_id = 1 AND confirmed = true;
+```
+
+#### 4. Создание жанра
+```sql
+INSERT INTO films (name)
+VALUES ('Комедия');
+```
+
+#### 5. Добавление жанра к фильму
+```sql
+INSERT INTO films_genres (film_id, genre_id)
+VALUES (1, 2);
 ```
 
