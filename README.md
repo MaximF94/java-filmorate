@@ -61,3 +61,15 @@ Ref genre_films: genres.genre_id < films_genres.genre_id
 
 Ref rating_films: mpa_ratings.mpa_rating_id < films.mpa_rating_id
 ```
+
+## Запросы
+
+#### 1. Выбрать все фильмы с рейтингом PG-13
+
+```sql
+SELECT *
+FROM films AS f
+INNER JOIN mpa_ratings AS mpa ON f.film_id = mpa.film_id
+WHERE mpa.name = 'PG-13';
+```
+
