@@ -1,3 +1,3 @@
 # java-filmorate
 Template repository for Filmorate project.
-(images/shema-filmorate)
+![Схема БД](images/shema-filmorate)
