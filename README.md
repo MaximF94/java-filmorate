@@ -21,9 +21,8 @@ Table films {
   film_id integer [primary key]
   name varchar
   description varchar
-  releaseDate date
+  release_date date
   duration integer
-  genre_id integer
   mpa_rating_id integer
 
 }
@@ -64,10 +63,15 @@ Ref rating_films: mpa_ratings.mpa_rating_id < films.mpa_rating_id
 
 ## Запросы
 
-#### 1. Выбрать все фильмы с рейтингом PG-13
+#### 1. Добавление фильма
+```sql
+INSERT INTO films (name,description,release_date,duration,mpa_rating_id)
+VALUES ('Назад в будущее','Фильм про путешествия во времени','1985-07-03',116,3);
+```
+#### 2. Выбрать все фильмы с рейтингом PG-13
 
 ```sql
-SELECT *
+SELECT f*, mpa.name
 FROM films AS f
 INNER JOIN mpa_ratings AS mpa ON f.film_id = mpa.film_id
 WHERE mpa.name = 'PG-13';
