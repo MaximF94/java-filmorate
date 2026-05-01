@@ -66,7 +66,7 @@ Ref rating_films: mpa_ratings.mpa_rating_id < films.mpa_rating_id
 #### 1. Добавление фильма
 ```sql
 INSERT INTO films (name,description,release_date,duration,mpa_rating_id)
-VALUES ('Назад в будущее','Фильм про путешествия во времени','1985-07-03',116,3);
+VALUES ('Тестовый фильм','Тестовое описание','1985-07-03',116,3);
 ```
 #### 2. Выбрать все фильмы с рейтингом PG-13
 ```sql
@@ -96,3 +96,8 @@ INSERT INTO films_genres (film_id, genre_id)
 VALUES (1, 2);
 ```
 
+#### 6. Поставить лайк фильму
+```sql
+INSERT INTO film_likes (film_id, user_id)
+VALUES (1, 10);
+```
