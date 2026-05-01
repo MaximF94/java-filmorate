@@ -8,19 +8,19 @@ import java.util.Set;
 
 public interface UserStorage {
 
-    public User save(User user);
+    User save(User user);
 
-    public Collection<User> findAll();
+    Collection<User> findAll();
 
-    public Optional<User> findById(Long id);
+    Optional<User> findById(Long id);
 
-    public boolean delete(Long id);
+    boolean delete(Long id);
 
-    public void addFriend(User user, User friend);
+    void addFriend(User user, User friend);
 
-    public Set<User> getFriends(User user);
+    Set<User> getFriends(User user);
 
-    public void deleteFriend(User user, User friend);
+    void deleteFriend(User user, User friend);
 
-    public Set<User> getCommonFriends(User user, User other);
+    Set<User> getCommonFriends(User user, User other);
 }

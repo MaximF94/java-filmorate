@@ -149,7 +149,7 @@ public class FilmService {
         return film.getLikes() != null ? film.getLikes().size() : 0;
     }
 
-    Set<String> validate(Film film) {
+    private Set<String> validate(Film film) {
 
         Set<String> errors = new HashSet<>();
 

@@ -8,13 +8,11 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 import java.util.Set;
 
-/**
- * Film.
- */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class Film {
+
     private Long id;
     private String name;
     private String description;

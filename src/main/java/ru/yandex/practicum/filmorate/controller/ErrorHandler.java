@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -8,12 +9,14 @@ import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.ErrorResponse;
 
+@Slf4j
 @RestControllerAdvice
 public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleValidation(final ValidationException e) {
+        log.info("Ошибка валидации: {}", e.getMessage());
         return new ErrorResponse(
                 "Ошибка валидации",
                 e.getMessage()
@@ -23,8 +26,9 @@ public class ErrorHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleNotFound(final NotFoundException e) {
+        log.info("Объект не найден: {}", e.getMessage());
         return new ErrorResponse(
-                "Ошибка валидации",
+                "Объект не найден",
                 e.getMessage()
         );
     }
@@ -32,6 +36,7 @@ public class ErrorHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse handleAllExceptions(final Exception e) {
+        log.error("Внутренняя ошибка сервера: {}", e.getMessage());
         return new ErrorResponse(
                 "Внутренняя ошибка сервера",
                 "Произошла непредвиденная ошибка: " + e.getMessage()

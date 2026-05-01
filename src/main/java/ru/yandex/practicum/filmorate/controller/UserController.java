@@ -21,13 +21,11 @@ public class UserController {
     }
 
     @GetMapping
-    @ResponseStatus(HttpStatus.OK)
     public Collection<User> findAll() {
         return userService.findAll();
     }
 
     @GetMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
     public User findUserById(@PathVariable Long id) {
         return userService.findUser(id);
     }
@@ -39,7 +37,6 @@ public class UserController {
     }
 
     @PutMapping
-    @ResponseStatus(HttpStatus.OK)
     public User update(@RequestBody User newUser) {
         return userService.update(newUser);
     }
@@ -51,14 +48,12 @@ public class UserController {
     }
 
     @PutMapping("/{id}/friends/{friendId}")
-    @ResponseStatus(HttpStatus.OK)
     public void addFriend(@PathVariable Long id, @PathVariable Long friendId) {
         userService.addFriend(id, friendId);
     }
 
 
     @GetMapping("{id}/friends")
-    @ResponseStatus(HttpStatus.OK)
     public Set<User> getFriends(@PathVariable Long id) {
         return userService.getFriends(id);
     }
@@ -70,7 +65,6 @@ public class UserController {
     }
 
     @GetMapping("{id}/friends/common/{otherId}")
-    @ResponseStatus(HttpStatus.OK)
     public Set<User> getCommonFriends(@PathVariable Long id, @PathVariable Long otherId) {
         return userService.getCommonFriends(id, otherId);
     }

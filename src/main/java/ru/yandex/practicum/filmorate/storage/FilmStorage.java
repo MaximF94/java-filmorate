@@ -8,17 +8,17 @@ import java.util.Optional;
 
 public interface FilmStorage {
 
-    public Film save(Film film);
+    Film save(Film film);
 
-    public boolean delete(Long id);
+    boolean delete(Long id);
 
-    public Collection<Film> findAll();
+    Collection<Film> findAll();
 
-    public Optional<Film> findById(Long id);
+    Optional<Film> findById(Long id);
 
-    public void addLike(Film film, User user);
+    void addLike(Film film, User user);
 
-    public void deleteLike(Film film, User user);
+    void deleteLike(Film film, User user);
 
-    public Collection<Film> getTopFilmsByLikes(Integer count);
+    Collection<Film> getTopFilmsByLikes(Integer count);
 }
