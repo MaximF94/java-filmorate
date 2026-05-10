@@ -1,6 +1,6 @@
 # java-filmorate
 Template repository for Filmorate project.
-![Схема БД](./images/shema-filmorate-1.png)
+![Схема БД](./images/shema-filmorate.png)
 
 ```sql
 Table users {
