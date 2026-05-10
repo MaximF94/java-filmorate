@@ -86,7 +86,7 @@ WHERE uf.user_id = 1 AND confirmed = true;
 
 #### 4. Создание жанра
 ```sql
-INSERT INTO films (name)
+INSERT INTO genres (name)
 VALUES ('Комедия');
 ```
 
