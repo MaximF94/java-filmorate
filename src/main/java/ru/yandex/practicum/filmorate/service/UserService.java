@@ -1,6 +1,8 @@
 package ru.yandex.practicum.filmorate.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
@@ -18,7 +20,8 @@ public class UserService {
 
     private final UserStorage userStorage;
 
-    public UserService(UserStorage userStorage) {
+    @Autowired
+    public UserService(@Qualifier("userDbStorage") UserStorage userStorage) {
         this.userStorage = userStorage;
     }
 
@@ -87,10 +90,9 @@ public class UserService {
 
         boolean wereFriends = user.getFriends().contains(friend.getId());
 
-        userStorage.deleteFriend(user, friend);
-
         if (wereFriends) {
             log.info("Пользователь {} удалил пользователя {} из друзей", user.getId(), friend.getId());
+            userStorage.deleteFriend(user, friend);
         } else {
             log.warn("Пользователь {} и {} не были друзьями",
                     user.getId(), friend.getId());
