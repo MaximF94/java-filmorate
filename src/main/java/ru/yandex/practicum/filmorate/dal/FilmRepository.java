@@ -114,9 +114,17 @@ public class FilmRepository extends BaseRepository<Film> {
     }
 
     private void saveGenres(Long filmId, Set<Genre> genres) {
-        for (Genre genre : genres) {
-            jdbc.update(INSERT_GENRE_QUERY, filmId, genre.getId());
+
+        if (genres == null || genres.isEmpty()) {
+            return;
         }
+
+        jdbc.batchUpdate(INSERT_GENRE_QUERY, genres, genres.size(),
+                (ps, genre) -> {
+                    ps.setLong(1, filmId);
+                    ps.setLong(2, genre.getId());
+                }
+        );
     }
 
     private void deleteGenres(Long filmId) {
