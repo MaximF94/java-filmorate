@@ -16,6 +16,7 @@ import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -179,10 +180,15 @@ public class FilmService {
 
         if (film.getGenres() != null && !film.getGenres().isEmpty()) {
 
-            for (Genre genre : film.getGenres()) {
+            Set<Long> genreIds = film.getGenres().stream()
+                    .map(Genre::getId)
+                    .collect(Collectors.toSet());
 
-                if (genreStorage.findById(genre.getId()).isEmpty()) {
-                    throw new NotFoundException("Жанр с ID " + genre.getId() + " не существует");
+            Set<Long> existingIds = genreStorage.findExistingIds(genreIds);
+
+            for (Long genreId : genreIds) {
+                if (!existingIds.contains(genreId)) {
+                    throw new NotFoundException("Жанр с ID " + genreId + " не существует");
                 }
             }
         }

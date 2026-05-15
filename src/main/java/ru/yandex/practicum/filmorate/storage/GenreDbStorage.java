@@ -6,6 +6,7 @@ import ru.yandex.practicum.filmorate.model.Genre;
 
 import java.util.Collection;
 import java.util.Optional;
+import java.util.Set;
 
 @Component
 public class GenreDbStorage implements GenreStorage {
@@ -24,5 +25,10 @@ public class GenreDbStorage implements GenreStorage {
     @Override
     public Optional<Genre> findById(Long id) {
         return genreRepository.findById(id);
+    }
+
+    @Override
+    public Set<Long> findExistingIds(Set<Long> ids) {
+        return genreRepository.findExistingIds(ids);
     }
 }

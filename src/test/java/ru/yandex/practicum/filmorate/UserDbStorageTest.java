@@ -11,7 +11,8 @@ import ru.yandex.practicum.filmorate.dal.mappers.UserRowMapper;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserDbStorage;
 
-import java.util.Optional;
+import java.time.LocalDate;
+import java.util.*;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
@@ -22,6 +23,25 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 public class UserDbStorageTest {
 
     private final UserDbStorage userStorage;
+
+    private User createUser() {
+        User user = new User();
+        user.setEmail("mytestemail@mail.ru");
+        user.setLogin("test");
+        user.setName("Test Testov");
+        user.setBirthday(LocalDate.of(1975, 1, 1));
+        user.setFriends(addFriends());
+        return user;
+    }
+
+    private Set<Long> addFriends() {
+        Set<Long> friends = new HashSet<>();
+        friends.add(1L);
+        friends.add(2L);
+        friends.add(3L);
+        return friends;
+    }
+
 
     @Test
     void testFindUserById() {
@@ -34,10 +54,35 @@ public class UserDbStorageTest {
                 );
     }
 
+    @Test
+    void testCreateUser() {
+        User user = createUser();
 
-    //Здесь я хотел бы добавить тесты на добавление пользователя, но тест падает, когда пытается сохранить запись.
-    //По непонятной причине все время пытается добавить ID = 1. Не понимаю в чем может быть проблема.
-    //При обычном запуске приложения такой проблемы нет.
+        User createdUser = userStorage.save(user);
+
+        assertThat(createdUser).isNotNull();
+    }
+
+    @Test
+    void shouldFindAllUsers() {
+        Collection<User> users = userStorage.findAll();
+
+        assertThat(users).isNotNull();
+        assertThat(users.size()).isEqualTo(3);
+    }
+
+    @Test
+    void shouldAddFriend() {
+
+        Optional<User> user = userStorage.findById(1L);
+        Optional<User> friend = userStorage.findById(2L);
+
+
+        userStorage.addFriend(user.get(), friend.get());
+
+        assertThat(user).isPresent();
+        assertThat(user.get().getFriends().contains(1L));
+    }
 
 
 }

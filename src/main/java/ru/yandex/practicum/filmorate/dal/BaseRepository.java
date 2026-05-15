@@ -51,8 +51,6 @@ public class BaseRepository<T> {
 
 
         Number id = keyHolder.getKey();
-        System.out.println("Generated ID from keyHolder: " + id);
-        System.out.println("ID class: " + (id != null ? id.getClass() : "null"));
 
         if (id != null) {
             return id;

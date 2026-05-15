@@ -15,6 +15,7 @@ import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.storage.FilmDbStorage;
 
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
 
@@ -74,6 +75,37 @@ public class FilmDbStorageTest {
     void testCreateFilm() {
         Film createdFilm = filmStorage.save(createFilm());
         assertThat(createdFilm.getId()).isNotNull();
+    }
+
+    @Test
+    void testUpdateFilm() {
+        Optional<Film> oldFilm = filmStorage.findById(1L);
+
+        oldFilm.get().setDescription("new description");
+
+        Film updatedFilm = filmStorage.save(oldFilm.get());
+
+        assertThat(updatedFilm.getDescription().contains("new description"));
+    }
+
+    @Test
+    void testIsExistsGenresCount() {
+        Optional<Film> oldFilm = filmStorage.findById(1L);
+
+        assertThat(oldFilm.get().getGenres().size() == 2);
+    }
+
+    @Test
+    void testIsExistsMpa() {
+        Optional<Film> oldFilm = filmStorage.findById(1L);
+
+        assertThat(oldFilm.get().getMpa().getName().equals("R"));
+    }
+
+    @Test
+    void testLimitPopularFilmsCount() {
+        Collection<Film> popularFilms = filmStorage.getTopFilmsByLikes(2);
+        assertThat(popularFilms.size() == 2);
     }
 
 

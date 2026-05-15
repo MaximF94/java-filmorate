@@ -30,3 +30,33 @@ VALUES
     ('alice@example.com', 'alice_wonder', 'Алиса', '1990-05-15'),
     ('bob@example.com', 'bob_marley', 'Боб', '1988-12-03'),
     ('charlie@example.com', 'charlie_brown', 'Чарли', '1995-07-22');
+
+
+
+MERGE INTO PUBLIC.FRIENDS (USER_ID, FRIEND_ID)
+KEY (USER_ID, FRIEND_ID)
+VALUES
+    (1, 3),
+    (2, 1),
+    (2, 3),
+    (3, 1),
+    (3, 2);
+
+
+MERGE INTO PUBLIC.FILM_LIKES (FILM_ID, USER_ID)
+KEY (FILM_ID, USER_ID)
+VALUES
+    (1, 1),
+    (1, 2),
+    (1, 3),
+    (2, 1);
+
+
+MERGE INTO PUBLIC.FILMS_GENRES (FILM_ID, GENRE_ID)
+KEY (FILM_ID, GENRE_ID)
+VALUES
+    (1, 3),
+    (1, 4),
+    (2, 5),
+    (3, 4),
+    (3, 6);
