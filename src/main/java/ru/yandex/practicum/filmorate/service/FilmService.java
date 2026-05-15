@@ -2,16 +2,21 @@ package ru.yandex.practicum.filmorate.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.GenreStorage;
+import ru.yandex.practicum.filmorate.storage.MpaStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -19,14 +24,18 @@ public class FilmService {
 
     private final FilmStorage filmStorage;
     private final UserStorage userStorage;
+    private final GenreStorage genreStorage;
+    private final MpaStorage mpaStorage;
 
     private static final int MAX_LENGTH_DESCRIPTION = 200;
     private static final LocalDate MIN_RELEASE_DATE = LocalDate.of(1895, 12, 28);
 
     @Autowired
-    public FilmService(FilmStorage filmStorage, UserStorage userStorage) {
+    public FilmService(@Qualifier("filmDbStorage") FilmStorage filmStorage, @Qualifier("userDbStorage") UserStorage userStorage, GenreStorage genreStorage, MpaStorage mpaStorage) {
         this.filmStorage = filmStorage;
         this.userStorage = userStorage;
+        this.genreStorage = genreStorage;
+        this.mpaStorage = mpaStorage;
     }
 
     public Collection<Film> findAll() {
@@ -167,6 +176,27 @@ public class FilmService {
 
         if (film.getDuration() < 0) {
             errors.add("Продолжительность фильма должна быть положительным числом");
+        }
+
+        if (film.getGenres() != null && !film.getGenres().isEmpty()) {
+
+            Set<Long> genreIds = film.getGenres().stream()
+                    .map(Genre::getId)
+                    .collect(Collectors.toSet());
+
+            Set<Long> existingIds = genreStorage.findExistingIds(genreIds);
+
+            for (Long genreId : genreIds) {
+                if (!existingIds.contains(genreId)) {
+                    throw new NotFoundException("Жанр с ID " + genreId + " не существует");
+                }
+            }
+        }
+
+        if (film.getMpa() != null) {
+            if (mpaStorage.findById(film.getMpa().getId()).isEmpty()) {
+                throw new NotFoundException("Рейтинг не найден");
+            }
         }
 
         return errors;
